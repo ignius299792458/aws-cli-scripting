@@ -4,8 +4,8 @@ set -euo pipefail
 
 check_awscli(){
 	if ! command -v aws &> /dev/null; then
-		echo "AWS CLI is not installed !" >&2
-		exit 1
+		echo "AWS CLI is not installed, So installing..." >&2
+		install_awscli
 	fi
 }
 
@@ -74,11 +74,32 @@ create_ec2_instance(){
 
 	
 	# Wait for the instance to be in running state
+	echo "Waiting for instance to be at running state......"
 	wait_for_instance "$instance_id"
 }
 
 
 main () {
-	if ! check_awscli 
-		
+	# check aws-cli
+	check_awscli
+
+	echo "Creating EC2 instance...."	
+	#Specify the EC2 instance parameters
+	AMI_ID=""
+	INSTANCE_TYPE="t2.micro"
+	KEY_NAME=""
+	SUBNET_ID=""
+	SECURITY_GROUP_IDS=""
+	INSTANCE_NAME=""
+	
+	# Creating the EC2 instance with all configuration
+	create_ec2_instance "$AMI_ID" "$INSTANCE_TYPE" "$KEY_NAME" "$SUBNET_ID" "$SECURITY_GROUP_IDS" "$INSTANCE_NAME"
+	
+	echo "EC2 instance creation completed..."
+	
 }
+
+main "$@"
+
+
+
